@@ -1,0 +1,20 @@
+# WS 12/12/20
+# 01.py
+# first pycuda program, from 'hands-on gpu programming with python and cuda book', just hand-copying
+# the code at present
+
+import pycuda.driver as drv 
+drv.init()
+
+#print('Number of detected CUDA devices: {}'.format(drv.Device.count()))
+
+for i in range(drv.Device.count()):
+    gpu_device = drv.Device(i)
+    print('Device {}: {}'.format(i, gpu_device.name()))
+    compute_capability = float('%d.%d' % gpu_device.compute_capability())
+    print('\t Compute Capability: {}'.format(compute_capability))
+    print('\t Total Memory: {} MB'.format(gpu_device.total_memory()//1024**2))
+    device_attributes_tuples = gpu_device.get_attributes().iteritems()
+    device_attributes = {}
+    for k, v in device_attributes_tuples:
+        device_attributes[str(k)] = v
