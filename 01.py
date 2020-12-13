@@ -14,7 +14,18 @@ for i in range(drv.Device.count()):
     compute_capability = float('%d.%d' % gpu_device.compute_capability())
     print('\t Compute Capability: {}'.format(compute_capability))
     print('\t Total Memory: {} MB'.format(gpu_device.total_memory()//1024**2))
-    device_attributes_tuples = gpu_device.get_attributes().iteritems()
+    # WS note: in python 2.7 (author's version) it is .iteritems(); in python 3 it is .items()
+    device_attributes_tuples = gpu_device.get_attributes().items()
     device_attributes = {}
     for k, v in device_attributes_tuples:
         device_attributes[str(k)] = v
+        #print('\t', k, v)
+    num_mp = device_attributes['MULTIPROCESSOR_COUNT']
+    cuda_cores_per_mp = {5.3 : 128}[compute_capability]  # just hardwired this: see enotes for more info, sources
+    print('\t {} Multiprocessors x {} CUDA cores/MP = {} Total CUDA cores'. format(num_mp, 
+        cuda_cores_per_mp, num_mp * cuda_cores_per_mp))
+
+    device_attributes.pop('MULTIPROCESSOR_COUNT')
+
+    for k in device_attributes.keys():
+        print('\t {}: {}'.format(k, device_attributes[k]))
